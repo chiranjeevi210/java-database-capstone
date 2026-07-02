@@ -7,6 +7,11 @@ import java.util.List;
 
 @Entity
 public class Doctor {
+    public Long getId() { return this.id; }
+    public String getEmail() { return this.email; }
+    public String getPassword() { return this.password; }
+    public String getAvailability() { return this.availability; }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

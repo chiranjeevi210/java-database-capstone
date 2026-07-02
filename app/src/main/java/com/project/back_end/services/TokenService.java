@@ -58,11 +58,11 @@ public class TokenService {
     /**
      * Decodes and extracts the user identifier string payload embedded inside the token.
      */
-    public String extractIdentifier(String token) {
+            public String extractIdentifier(String token) {
         try {
-            Claims claims = Jwts.parserBuilder()
-                    .setSigningKey(getSigningKey())
-                    .build()
+            // Using standard legacy syntax compatible with your lab environment dependencies
+            Claims claims = io.jsonwebtoken.Jwts.parser()
+                    .setSigningKey(jwtSecret.getBytes(java.nio.charset.StandardCharsets.UTF_8))
                     .parseClaimsJws(token)
                     .getBody();
             return claims.getSubject();
@@ -70,6 +70,7 @@ public class TokenService {
             return null;
         }
     }
+
 
     /**
      * Verifies token authenticity against explicit relational client database domains.

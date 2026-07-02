@@ -7,6 +7,10 @@ import java.time.LocalDate;
 
 @Entity
 public class Patient {
+    public Long getId() { return this.id; }
+public String getEmail() { return this.email; }
+public String getPhone() { return this.phone; }
+public String getPassword() { return this.password; }
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

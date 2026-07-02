@@ -7,6 +7,11 @@ import java.time.LocalDateTime;
 
 @Entity
 public class Appointment {
+    public Long getId() { return this.id; }
+    public com.project.back_end.models.Doctor getDoctor() { return this.doctor; }
+    public com.project.back_end.models.Patient getPatient() { return this.patient; }
+    public java.time.LocalDateTime getAppointmentTime() { return this.appointmentTime; }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
