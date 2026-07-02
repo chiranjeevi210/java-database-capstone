@@ -26,7 +26,6 @@ public class AppointmentController {
             @PathVariable("patientName") String patientName,
             @PathVariable("token") String token) {
         
-        // Secure validation gate: restrict logs to verified medical doctors
         ResponseEntity<Map<String, String>> tokenCheck = service.validateToken(token, "doctor");
         if (tokenCheck != null) {
             return tokenCheck;

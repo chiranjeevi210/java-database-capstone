@@ -6,11 +6,10 @@ import com.project.back_end.repo.PatientRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import javax.crypto.SecretKey;
+
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
 
@@ -26,24 +25,14 @@ public class TokenService {
     @Autowired
     private PatientRepository patientRepository;
 
-    // Injects a continuous 256-bit safe secret string from application.properties
     @Value("${jwt.secret:defaultSecretKeyForClinicManagementSystem2026SecureString}")
     private String jwtSecret;
 
     /**
-     * Retrieves the secret cryptographic signing key required for token signatures.
-     */
-    private SecretKey getSigningKey() {
-        byte[] keyBytes = jwtSecret.getBytes(StandardCharsets.UTF_8);
-        return Keys.hmacShaKeyFor(keyBytes);
-    }
-
-    /**
-     * Generates a stateless JWT authorization token containing the user identifier.
-     * Configures a standard token expiration window of exactly 7 days.
+     * Generates a token using legacy parsing algorithms
      */
     public String generateToken(String identifier) {
-        long expirationTimeMs = 7 * 24 * 60 * 60 * 1000L; // 7 days runtime frame
+        long expirationTimeMs = 7 * 24 * 60 * 60 * 1000L; // 7 days
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + expirationTimeMs);
 
@@ -51,18 +40,18 @@ public class TokenService {
                 .setSubject(identifier)
                 .setIssuedAt(now)
                 .setExpiration(expiryDate)
-                .signWith(getSigningKey(), SignatureAlgorithm.HS256)
+                .signWith(SignatureAlgorithm.HS256, jwtSecret.getBytes(StandardCharsets.UTF_8))
                 .compact();
     }
 
-    /**
-     * Decodes and extracts the user identifier string payload embedded inside the token.
+        /**
+     * Decodes and extracts the user identifier string payload using the modern builder pattern
      */
-            public String extractIdentifier(String token) {
+    public String extractIdentifier(String token) {
         try {
-            // Using standard legacy syntax compatible with your lab environment dependencies
-            Claims claims = io.jsonwebtoken.Jwts.parser()
-                    .setSigningKey(jwtSecret.getBytes(java.nio.charset.StandardCharsets.UTF_8))
+            Claims claims = Jwts.parser()
+                    .setSigningKey(jwtSecret.getBytes(StandardCharsets.UTF_8))
+                    .build() // <--- This fixes your exact compiler error
                     .parseClaimsJws(token)
                     .getBody();
             return claims.getSubject();
@@ -71,9 +60,8 @@ public class TokenService {
         }
     }
 
-
     /**
-     * Verifies token authenticity against explicit relational client database domains.
+     * Verifies token authenticity against database contexts
      */
     public boolean validateToken(String token, String user) {
         String identifier = extractIdentifier(token);
@@ -82,7 +70,6 @@ public class TokenService {
         }
 
         try {
-            // Context branch verification routing checks
             if ("admin".equalsIgnoreCase(user)) {
                 return adminRepository.findByUsername(identifier) != null;
             } else if ("doctor".equalsIgnoreCase(user)) {

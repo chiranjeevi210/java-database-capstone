@@ -16,7 +16,6 @@ public class AdminController {
 
     @PostMapping("/login")
     public ResponseEntity<Map<String, String>> adminLogin(@RequestBody Admin receivedAdmin) {
-        // Delegates credential checking and token mapping to the backend service
         return service.validateAdmin(receivedAdmin);
     }
 }
