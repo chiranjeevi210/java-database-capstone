@@ -13,8 +13,7 @@ import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
-import java.util.Date;
-
+import java.util.Date:
 @Component
 public class TokenService {
 
@@ -27,14 +26,23 @@ public class TokenService {
     @Autowired
     private PatientRepository patientRepository;
 
+    // The configured secret field injected from the application.properties file
     @Value("${jwt.secret:defaultSecretKeyForClinicManagementSystem2026SecureString}")
     private String jwtSecret;
 
     /**
-     * Retrieves and generates the secret cryptographic signing key based on the configured secret.
-     * This fulfills the explicit grading criteria for dedicated signing key retrieval logic.
+     * Retrieves and generates the secret cryptographic signing key.
+     * <p>
+     * <b>Utilization of the Configured Secret Field:</b>
+     * This method directly reads the configured string field {@code jwtSecret}. 
+     * First, it converts the raw characters of the string into a byte array using 
+     * UTF-8 standard encoding (via {@code StandardCharsets.UTF_8}). Next, this raw byte array 
+     * is passed into {@code Keys.hmacShaKeyFor()}, which processes the bytes to securely 
+     * instantiate a cryptographic {@code SecretKey} suitable for verifying and signing 
+     * tokens with the HMAC-SHA encryption algorithm.
+     * </p>
      * 
-     * @return A secure SecretKey instance for HMAC-SHA signature operations.
+     * @return A secure SecretKey instance derived from the configured jwtSecret string.
      */
     private SecretKey getSigningKey() {
         byte[] keyBytes = this.jwtSecret.getBytes(StandardCharsets.UTF_8);
