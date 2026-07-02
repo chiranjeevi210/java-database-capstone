@@ -137,12 +137,14 @@ public class DoctorService {
     }
 
     /**
-     * Private runtime utility evaluating string slot configurations against AM/PM boundaries.
+     * Private runtime utility evaluating collection slot configurations against AM/PM boundaries.
      */
     private List<Doctor> filterDoctorByTime(List<Doctor> doctors, String amorPm) {
         return doctors.stream().filter(doc -> {
-            String availability = doc.getAvailableTimes(); 
-            if (availability == null) return false;
+            List<String> availabilityList = doc.getAvailableTimes(); 
+            if (availabilityList == null || availabilityList.isEmpty()) return false;
+            
+            String availability = String.join(", ", availabilityList);
             
             boolean hasAm = availability.contains("09:00") || availability.contains("10:00") || availability.contains("11:00");
             boolean hasPm = availability.contains("13:00") || availability.contains("14:00") || availability.contains("15:00") || availability.contains("16:00");

@@ -13,7 +13,8 @@ import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
-import java.util.Date:
+import java.util.Date;
+
 @Component
 public class TokenService {
 
@@ -26,7 +27,6 @@ public class TokenService {
     @Autowired
     private PatientRepository patientRepository;
 
-    // The configured secret field injected from the application.properties file
     @Value("${jwt.secret:defaultSecretKeyForClinicManagementSystem2026SecureString}")
     private String jwtSecret;
 
